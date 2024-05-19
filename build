@@ -39,6 +39,11 @@ echo postinstall | cpio -H newc -o -A -F $ISO_FILES/install.amd/initrd
 gzip $ISO_FILES/install.amd/initrd
 chmod -w -R $ISO_FILES/install.amd/
 
+chmod +w $ISO_FILES/isolinux/isolinux.cfg
+cp isolinux.cfg $ISO_FILES/isolinux
+chmod -w $ISO_FILES/isolinux/isolinux.cfg
+
+
 chmod +w $ISO_FILES/md5sum.txt
 (cd $ISO_FILES; md5sum `find -follow -type f` > md5sum.txt)
 chmod -w $ISO_FILES/md5sum.txt

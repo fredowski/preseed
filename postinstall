@@ -31,7 +31,29 @@ tar -z -x -C /tmp -f /tmp/postinstall.tar.gz
 #cp /tmp/postinstall.d/vimrc /root/.vimrc
 #cp /tmp/postinstall.d/bash_login /root/.bash_login
 
-
+# When VMWare Fusion first boots the .iso image, a virtual ethernet
+# card is assigned to the virtual pci slot 33
+# Based on the the idea of "predictable names", the assigned interface
+# name in linux is ens33. The debian installer builds the networking setup on
+# this name.
+# See: https://wiki.debian.org/NetworkInterfaceNames#initrd
+# The assigned pci slot is part of the VMware virtual machine and is noted
+# in the .vmx file with the attribute
+#
+#       ethernet0.pcislotnumber = 33
+#
+# Vagrant will ignore this setup and assign a new pci slot 160
+# This results in a new ethernet device name ens160. Therefore the 
+# networking code will not work anymore as the interface name ens33 is
+# noted in /etc/network/interfaces.
+# The plan is to disable the "predictable names" and have the oldfashioned
+# "eth0" back during install. This can be achieved by disabling 
+#
+# /lib/systemd/network/99-default.link
+#
+# which is responsible for the "predictable" name.
+# Therefore we overwrite this by putting a file in /etc
+cp /tmp/postinstall.d/99-default.link /etc/systemd/network/
 
 # install ssh keys and other things for paul user
 mkdir -m700 -p /home/caeuser/.ssh
@@ -39,20 +61,6 @@ cp /tmp/postinstall.d/authorized_keys /home/caeuser/.ssh/authorized_keys
 cp /tmp/postinstall.d/vimrc /home/caeuser/.vimrc
 #cp /tmp/postinstall.d/bash_login /home/paul/.bash_login
 
-# fix permissions on root home directory
-#chmod 700 /root
-#chmod 600 /root/.bash_login
-
-# fix permissions on paul home directory
-#chown -R paul:paul /home/paul
-#chmod 700 /home/paul
-#chmod 600 /home/paul/.bash_login /home/paul/.ssh/authorized_keys
-
-# Install vagrant user with password vagrant and add to sudo
-#PASS=`mkpasswd -m sha-512 vagrant gruenkohl`
-#useradd -c vagrant -m -g vagrant vagrant
-#chpasswd vagrant:vagrant
-#adduser vagrant sudo
 # install ssh keys such that user vagrant can login without password
 # This are the vagrant non secure public keys which are used by vagrant
 mkdir -m700 -p /home/vagrant/.ssh

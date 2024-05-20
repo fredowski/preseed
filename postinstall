@@ -31,9 +31,7 @@ tar -z -x -C /tmp -f /tmp/postinstall.tar.gz
 #cp /tmp/postinstall.d/vimrc /root/.vimrc
 #cp /tmp/postinstall.d/bash_login /root/.bash_login
 
-# add our sudoers file for paul
-#cp /tmp/postinstall.d/sudoers /etc/sudoers.d/paul
-#chmod 400 /etc/sudoers.d/paul
+
 
 # install ssh keys and other things for paul user
 mkdir -m700 -p /home/caeuser/.ssh
@@ -49,3 +47,19 @@ cp /tmp/postinstall.d/vimrc /home/caeuser/.vimrc
 #chown -R paul:paul /home/paul
 #chmod 700 /home/paul
 #chmod 600 /home/paul/.bash_login /home/paul/.ssh/authorized_keys
+
+# Install vagrant user with password vagrant and add to sudo
+#PASS=`mkpasswd -m sha-512 vagrant gruenkohl`
+#useradd -c vagrant -m -g vagrant vagrant
+#chpasswd vagrant:vagrant
+#adduser vagrant sudo
+# install ssh keys such that user vagrant can login without password
+# This are the vagrant non secure public keys which are used by vagrant
+mkdir -m700 -p /home/vagrant/.ssh
+cp /tmp/postinstall.d/authorized_keys /home/vagrant/.ssh/authorized_keys
+chown -R vagrant:vagrant /home/vagrant
+chmod 700 /home/vagrant
+chmod 600 /home/vagrant/.ssh/authorized_keys
+# vagrant can do sudo without password
+cp /tmp/postinstall.d/sudoers /etc/sudoers.d/vagrant
+chmod 400 /etc/sudoers.d/vagrant

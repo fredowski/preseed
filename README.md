@@ -37,6 +37,12 @@ Note that the preseed.cfg file has no password for logging in as the "paul" user
 3. Place that new password in the preseed.cfg file.
 4. Remove newpassword.txt and *definitely* **do not** put it into source control.
 
+# macoS
+
+Use brew to install some dependencies
+
+```brew install cpio xorriso```
+
 # Using the "preseed" ISO
 
 Use this ISO just like you would any other install ISO. A preseeded ISO file can build baremetal systems or virtual machines. It is only useful for on-premise instances and is not useful for cloud instances.
